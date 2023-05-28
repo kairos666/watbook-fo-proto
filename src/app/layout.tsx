@@ -1,14 +1,19 @@
 'use client';
 
 import { Metadata } from 'next';
-import { Inter } from 'next/font/google';
 import { Button } from 'react-bootstrap';
 import { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import '../styles/globals.scss';
 import GlobalNavigation from './GlobalNavigation';
 
+// FONTS
+import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] });
+
+// FONT AWESOME LIBRARY
+import faIconsSetup from '@/init-scripts/fa-icons-setup';
+faIconsSetup()
 
 export const metadata:Metadata = {
     title: { default: 'WATBOOK FO', template: '%s | WATBOOK FO' },
