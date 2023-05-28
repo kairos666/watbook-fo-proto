@@ -5,3 +5,31 @@
     --green: $green;
     --blue: $blue;
 }
+
+// toggle navigation fine tuning
+.offcanvas {
+    padding-left: $sidebarWidth + 1 + $topbarHeight;
+    padding-right: $topbarHeight;
+    padding-top: 2 * $topbarHeight + 1;
+    clip-path: unquote("inset(#{ $topbarHeight + 1 } 0 0 #{ $sidebarWidth + 1 } round #{ $topbarHeight + 1 } 0 0 0)");
+    background-color: $openSidebarBgColor;
+    color: white;
+    .btn-close { 
+        width: 1.2rem;
+        height: 1.2rem;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 384 512'%3E%3C!--! Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. --%3E%3Cpath fill='%23ffffff' d='M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z'/%3E%3C/svg%3E");
+        background-size: cover;
+    }
+    &.offcanvas-start { width: $sidebarWidth + 1 + $openSidebarUtilityWidth;  }
+
+    .offcanvas-header { padding-inline: 0; }
+    .offcanvas-body { padding-inline: 0; }
+}
+
+// UTILS
+.btn-reset {
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: none;
+}

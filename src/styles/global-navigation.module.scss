@@ -1,0 +1,66 @@
+@import "./variables";
+
+.gnav-wrapper {
+    display: grid;
+    grid-template-columns: $sidebarWidth auto;
+    grid-template-rows: $topbarHeight auto;
+    grid-template-areas:
+        "topbar topbar"
+        "sidebar content";
+    width:100vw;
+    height:100vh;
+}
+
+.gnav-TopBar {
+    position:relative;
+    z-index: 2000;
+    grid-area: topbar;
+    background-color: $gnavBgColor;
+    height: 100%;
+    width: 100%;
+}
+
+.gnav-SideBar {
+    position:relative;
+    z-index: 2000;
+    grid-area: sidebar;
+    background-color: $gnavBgColor;
+    width: 100%;
+    height: 100%;
+    padding-block: $topbarHeight;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $topbarHeight;
+}
+
+.gnav-SideBar-Logo {
+    flex: 0 0 auto;
+}
+
+.gnav-SideBar-NavigationSlot {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $topbarHeight;
+}
+
+.gnav-SideBar-FunctionalSlot {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $topbarHeight;
+}
+
+.gnav-transclusion-window {
+    position:relative;
+    z-index: 1000;
+    border-top: 1px solid $gnavBorderColor;
+    border-left: 1px solid $gnavBorderColor;
+    border-top-left-radius: $topbarHeight;
+    background: linear-gradient(180deg, #FFFFFF -19.29%, #DDE3EF 100%);
+    padding: 2.5rem;
+}

@@ -13,7 +13,7 @@ export const metadata:Metadata = {
 
 export default function MockGenerator() {
     return (
-        <main className="container mt-5">
+        <main className="container">
             <div className="row mb-4">
                 <section className="col">
                     <h2>Piscine <FontAwesomeIcon icon="water-ladder" /></h2>
