@@ -1,9 +1,12 @@
 @import "./variables";
 
 :root {
-    --red: $red;
-    --green: $green;
-    --blue: $blue;
+    --bs-blue: #004770;
+    --bs-primary: #004770;
+}
+
+body {
+    overflow: hidden;
 }
 
 // toggle navigation fine tuning

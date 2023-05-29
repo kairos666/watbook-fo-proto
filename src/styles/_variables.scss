@@ -2,10 +2,18 @@ $red: #ff0000;
 $green: #00ff00;
 $blue: #0000ff;
 
+// WATBOOK colors
+$text-color: #004770;
+$accent-color: #FBB900;
+
+// base dimension
+$std-gap: 2.5rem;
+$slideMaxWidth: 1200px;
+
 // global navigation
 $gnavBgColor: #ffffff;
 $gnavBorderColor: #DFDACC;
 $topbarHeight: 40px;
 $sidebarWidth: 88px;
-$openSidebarBgColor: #004770;
+$openSidebarBgColor: $text-color;
 $openSidebarUtilityWidth: 468px;

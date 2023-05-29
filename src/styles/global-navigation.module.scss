@@ -3,7 +3,7 @@
 .gnav-wrapper {
     display: grid;
     grid-template-columns: $sidebarWidth auto;
-    grid-template-rows: $topbarHeight auto;
+    grid-template-rows: $topbarHeight unquote("calc(100vh - #{ $topbarHeight + 1 })");
     grid-template-areas:
         "topbar topbar"
         "sidebar content";
@@ -12,6 +12,7 @@
 }
 
 .gnav-TopBar {
+    grid-area: topbar;
     position:relative;
     z-index: 2000;
     grid-area: topbar;
@@ -21,6 +22,7 @@
 }
 
 .gnav-SideBar {
+    grid-area: sidebar;
     position:relative;
     z-index: 2000;
     grid-area: sidebar;
@@ -56,6 +58,8 @@
 }
 
 .gnav-transclusion-window {
+    grid-area: content;
+    overflow-y: auto;
     position:relative;
     z-index: 1000;
     border-top: 1px solid $gnavBorderColor;

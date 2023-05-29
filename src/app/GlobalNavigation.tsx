@@ -29,14 +29,14 @@ export default function GlobalNavigation({ children }:GlobalNavigationProps) {
                     <nav className={ styles['gnav-SideBar'] }>
                         <Image src="/W.svg" alt="Watbook Logo" className={ styles['gnav-SideBar-Logo'] } width={48} height={34} priority />
                         <div className={ styles['gnav-SideBar-NavigationSlot'] }>
-                            <button className="btn-reset" onClick={ handleShow }><FontAwesomeIcon icon="person-swimming" size="2xl" /></button>
-                            <button className="btn-reset" onClick={ () => { alert("bouchonné") } }><FontAwesomeIcon icon={['fas', 'w']} size="2xl" /></button>
-                            <button className="btn-reset" onClick={ () => { alert("bouchonné") } }><FontAwesomeIcon icon={['fas', 'wrench']} size="2xl" /></button>
-                            <button className="btn-reset" onClick={ () => { alert("bouchonné") } }><FontAwesomeIcon icon={['fas', 'list-check']} size="2xl" /></button>
+                            <button className="btn-reset" onClick={ handleShow }><FontAwesomeIcon color="#004770" icon="person-swimming" size="2xl" /></button>
+                            <button className="btn-reset" onClick={ () => { alert("bouchonné") } }><FontAwesomeIcon color="#004770" icon={['fas', 'w']} size="2xl" /></button>
+                            <button className="btn-reset" onClick={ () => { alert("bouchonné") } }><FontAwesomeIcon color="#004770" icon={['fas', 'wrench']} size="2xl" /></button>
+                            <button className="btn-reset" onClick={ () => { alert("bouchonné") } }><FontAwesomeIcon color="#004770" icon={['fas', 'list-check']} size="2xl" /></button>
                         </div>
                         <div className={ styles['gnav-SideBar-FunctionalSlot'] }>
-                            <button className="btn-reset" onClick={ () => { alert("bouchonné") } }><FontAwesomeIcon icon={['far', 'user']} size="2xl" /></button>
-                            <button className="btn-reset" onClick={ () => { alert("bouchonné") } }><FontAwesomeIcon icon={['far', 'folder']} size="2xl" /></button>
+                            <button className="btn-reset" onClick={ () => { alert("bouchonné") } }><FontAwesomeIcon color="#004770" icon={['far', 'user']} size="2xl" /></button>
+                            <button className="btn-reset" onClick={ () => { alert("bouchonné") } }><FontAwesomeIcon color="#004770" icon={['far', 'folder']} size="2xl" /></button>
                         </div>
                     </nav>
                     <div className={ styles['gnav-transclusion-window'] }>
@@ -59,11 +59,11 @@ export default function GlobalNavigation({ children }:GlobalNavigationProps) {
                     <nav className={ styles['gnav-SideBar'] }>
                         <Image src="/W.svg" alt="Watbook Logo" className={ styles['gnav-SideBar-Logo'] } width={48} height={34} priority />
                         <div className={ styles['gnav-SideBar-NavigationSlot'] }>
-                            <button className="btn-reset" onClick={ handleShow }><FontAwesomeIcon icon="hamburger" size="2xl" /></button>
+                            <button className="btn-reset" onClick={ handleShow }><FontAwesomeIcon color="#004770" icon="hamburger" size="2xl" /></button>
                         </div>
                         <div className={ styles['gnav-SideBar-FunctionalSlot'] }>
-                            <button className="btn-reset" onClick={ () => { alert("bouchonné") } }><FontAwesomeIcon icon="arrows-rotate" size="2xl" /></button>
-                            <button className="btn-reset" onClick={ () => { alert("bouchonné") } }><FontAwesomeIcon icon={['far', 'folder']} size="2xl" /></button>
+                            <button className="btn-reset" onClick={ () => { alert("bouchonné") } }><FontAwesomeIcon color="#004770" icon="arrows-rotate" size="2xl" /></button>
+                            <button className="btn-reset" onClick={ () => { alert("bouchonné") } }><FontAwesomeIcon color="#004770" icon={['far', 'folder']} size="2xl" /></button>
                         </div>
                     </nav>
                     <div className={ styles['gnav-transclusion-window'] }>

@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import 'bootstrap/dist/css/bootstrap.css';
+import 'bootstrap/scss/bootstrap.scss';
 import '../styles/globals.scss';
 import GlobalNavigation from './GlobalNavigation';
 
