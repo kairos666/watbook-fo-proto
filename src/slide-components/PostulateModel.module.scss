@@ -45,6 +45,9 @@
     &:hover, &:focus, &:active {
         background-color: lighten($accent-color, 15%);
     }
+    &:disabled {
+        background-color: darken($accent-color, 15%);
+    }
 }
 
 .posm-Content {
