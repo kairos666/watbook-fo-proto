@@ -11,6 +11,8 @@ export default function Home() {
                     <section className="col">
                         <h2>Contenu</h2>
                         <Link href="/free-content-model">Modèle de contenu libre</Link>
+                        <br/>
+                        <Link href="/grid-model">Modèle de grille</Link>
                     </section>
                     <section className="col">
                         <h2>Question</h2>
