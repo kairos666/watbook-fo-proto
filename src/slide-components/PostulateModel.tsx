@@ -18,7 +18,7 @@ export default function PostulateModel({ slideTitle, slideIllu, projectTitle, ch
     const formRef = useRef(null);
     const [isFormValid, setIsFormValid] = useState(false);
     const handleChange = () => {
-        if(formRef === null) return;
+        if(formRef.current === null) return;
 
         setIsFormValid(((formRef as any).current as HTMLFormElement).checkValidity());
     }

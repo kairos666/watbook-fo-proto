@@ -14,8 +14,10 @@ export default function Home() {
                     </section>
                     <section className="col">
                         <h2>Question</h2>
-                        <Link href="#">Modèle de question à choix unique ou multiple</Link>
+                        <Link href="/choice-question-model">Modèle de question à choix unique ou multiple</Link>
+                        <br/>
                         <Link href="#">Modèle de question à fourchette de prix</Link>
+                        <br/>
                         <Link href="#">Modèle de question de date</Link>
                     </section>
                 </div>
