@@ -10,7 +10,7 @@ export default function Home() {
                 <div className="row mb-4">
                     <section className="col">
                         <h2>Contenu</h2>
-                        <Link href="#">Modèle de contenu libre</Link>
+                        <Link href="/free-content-model">Modèle de contenu libre</Link>
                     </section>
                     <section className="col">
                         <h2>Question</h2>

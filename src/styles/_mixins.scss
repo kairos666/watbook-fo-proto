@@ -1,0 +1,28 @@
+@mixin nextBtn {
+    border:none;
+    padding: 12px 32px;
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 24px;
+    border-radius: 24px;
+    background-color: $accent-color;
+    color: $text-color;
+    &:hover, &:focus, &:active {
+        background-color: lighten($accent-color, 15%);
+    }
+    &:disabled {
+        background-color: darken($accent-color, 15%);
+    }
+}
+
+@mixin backBtn {
+    border:none;
+    padding:0;
+    width: $std-gap;
+    height:$std-gap;
+    border-radius: 50%;
+    background-color: $text-color;
+    &:hover, &:focus, &:active {
+        background-color: lighten($text-color, 15%);
+    }
+}
