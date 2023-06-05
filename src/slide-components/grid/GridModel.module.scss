@@ -1,5 +1,5 @@
-@import "../styles/variables";
-@import "../styles/mixins";
+@import "../../styles/variables";
+@import "../../styles/mixins";
 
 .grm-SlideWrapper {
     max-width: $slideMaxWidth;
@@ -59,11 +59,18 @@
 }
 
 .grc-Card-Description {
-    padding: $std-gap * 0.5;
+    padding: unquote("calc(#{ $std-gap * 0.5 } - 6px)");
     background-color:#fff;
     display:flex;
     align-items: center;
     gap: $std-gap * 0.5;
+    border: 3px solid #fff;
+    border-bottom-left-radius: $std-gap * 0.1;
+    border-bottom-right-radius: $std-gap * 0.1;
+
+    .grc-Card--selected & {
+        border-color: $accent-color;
+    }
 }
 
 .grc-Card-Description-Label {
@@ -95,6 +102,59 @@
     border: 3px solid $gnavBorderColor;
     &:hover, &:focus, &:active {
         border-color: $text-color;
+    }
+
+    > svg {
+        position:absolute;
+        inset: 50% 0 0 50%;
+        transform: translate(-50%, -50%);
+    }
+}
+
+.grc-Card-CtaQtSelector {
+    display:flex;
+}
+
+.grc-Card-CtaDecrement {
+    @include nextBtn;
+    font-size: 28px;
+    line-height: 48px;
+    padding:0;
+    width:60px;
+    height:48px;
+    border-top-right-radius:0;
+    border-bottom-right-radius:0;
+}
+.grc-Card-CtaCount {
+    font-size: 18px;
+    font-weight: 700;
+    line-height: 24px;
+    background-color: $accent-color;
+    color: $text-color;
+    padding:12px;
+}
+.grc-Card-CtaIncrement {
+    @include nextBtn;
+    font-size: 28px;
+    line-height: 48px;
+    padding:0;
+    width:60px;
+    height:48px;
+    border-top-left-radius:0;
+    border-bottom-left-radius:0;
+}
+
+.grc-Card-CtaRemoveFromCart {
+    @include nextBtn;
+    position:relative;
+    width:48px;
+    height:48px;
+    padding:0;
+    border: 3px solid $gnavBorderColor;
+    background-color: transparent;
+    &:hover, &:focus, &:active {
+        border-color: $text-color;
+        background-color: transparent;
     }
 
     > svg {
