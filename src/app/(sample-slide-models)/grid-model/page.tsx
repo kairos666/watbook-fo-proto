@@ -1,7 +1,7 @@
 'use client';
 
 import PoolBuilder from "@/mock-data/PoolBuilder";
-import GridSlide from "@/slide-components/grid/GridSlide";
+import GridListModel from "@/slide-components/grid/GridListModel";
 import { Metadata } from "next";
 
 export const metadata:Metadata = {
@@ -15,21 +15,23 @@ export default function GridSample() {
         .map(pool => ({
             title: pool.libelle,
             vignette: pool.illustrations[0].src,
-            // initialQt: 1,
-            // qtEnabled: true
+            initialQuantity: Math.round(Math.random())
         }));
 
     const props = {
         slideTitle: "Choix de la forme et modèle",
-        mandatoryChoice: true,
-        singularChoice: true,
-        hasCart: false,
-        choices: mockPools
+        slideConfig: {
+            mandatoryChoice: true,
+            multipleChoices: false,
+            hasCart: true,
+            quantityChoices: true
+        },
+        items: mockPools
     }
 
     return (
         <main>
-            <GridSlide {...props} />
+            <GridListModel {...props} />
         </main>
     )
 }
