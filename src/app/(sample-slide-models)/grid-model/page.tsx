@@ -13,9 +13,10 @@ export default function GridSample() {
         .fill(null)
         .map(() => PoolBuilder())
         .map(pool => ({
+            id: pool.id,
             title: pool.libelle,
             vignette: pool.illustrations[0].src,
-            initialQuantity: Math.round(Math.random())
+            initialQuantity: 0
         }));
 
     const props = {
