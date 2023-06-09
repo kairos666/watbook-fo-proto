@@ -1,7 +1,8 @@
 'use client';
 
 import PoolBuilder from "@/mock-data/PoolBuilder";
-import GridListModel from "@/slide-components/grid/GridListModel";
+import GridListModel, { BaseFilter } from "@/slide-components/grid/GridListModel";
+import groupBy from "lodash/groupBy";
 import { Metadata } from "next";
 
 export const metadata:Metadata = {
@@ -15,6 +16,7 @@ export default function GridSample() {
         .map(pool => ({
             id: pool.id,
             title: pool.libelle,
+            forme: pool.forme,
             vignette: pool.illustrations[0].src,
             initialQuantity: 0
         }));
@@ -25,14 +27,15 @@ export default function GridSample() {
             mandatoryChoice: true,
             multipleChoices: false,
             hasCart: true,
-            quantityChoices: true
+            quantityChoices: true,
+            filters: <BaseFilter hasAllFilter groupBy={ (items:any) => { return groupBy(items, (item) => item.forme) } } />
         },
         items: mockPools
     }
 
     return (
         <main>
-            <GridListModel {...props} />
+            <GridListModel {...props}/>
         </main>
     )
 }

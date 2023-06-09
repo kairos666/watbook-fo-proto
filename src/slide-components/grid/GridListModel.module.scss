@@ -163,3 +163,57 @@
         transform: translate(-50%, -50%);
     }
 }
+
+/**
+    FILTERS
+**/
+.grf-ContentFilters {
+    padding-inline-start: 0;
+    margin-block: 0 $std-gap * 0.5;
+    width:100%;
+    overflow-x:auto;
+    -webkit-overflow-scrolling: touch;
+    display: flex;
+    gap: $std-gap * 0.25;
+}
+
+.grf-FilterBtn {
+    @include nextBtn;
+    padding: 3px 8px;
+    font-size: 14px;
+    font-weight: 400;
+    background-color: transparent;
+    color: $text-color;
+    border:1px solid $text-color;
+    &:hover, &:focus, &:active, &.grf-FilterBtn--active {
+        background-color: $text-color;
+        color: #fff;
+    }
+}
+
+/**
+    PANIER
+**/
+.grm-Header-CartBtn {
+    @include nextBtn;
+    background-color: $accent-alt-color;
+    color: #ffffff;
+    &:hover, &:focus, &:active {
+        background-color: lighten($accent-alt-color, 15%);
+    }
+    &:disabled {
+        background-color: darken($accent-alt-color, 15%);
+    }
+
+    > span {
+        font-size: 16px;
+        font-weight: 400;
+        display: inline-block;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        background-color: #fff;
+        color: $text-color;
+        margin-left: 12px;
+    }
+}

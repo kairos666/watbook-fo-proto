@@ -2,7 +2,7 @@
 
 import { SlideBaseProps, SlideBasePropsDefaults } from "@/types/Slide";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer, useState } from "react";
 import styles from "./GridListModel.module.scss";
 
 /**
@@ -18,12 +18,18 @@ function itemReducer(state:GridCardProps[], action:{ type:string, payload?:any }
 
                 return item;
             });
+        
         case (action.type === "remove one"): 
-        return state.map(item => {
-            if(item.id === action.payload) item.quantity = (item?.quantity ?? 0) - 1;
+            return state.map(item => {
+                if(item.id === action.payload) item.quantity = (item?.quantity ?? 0) - 1;
 
-            return item;
-        });
+                return item;
+            });
+
+        case (action.type === "filter update"):
+            console.info("TODO filter function update");
+            return state;
+
         default:
             throw Error('Action inconnue');
     }
@@ -41,9 +47,7 @@ const stateInitBuilder = (config:GridListModelProps) => {
             : 'select';
 
         return {
-            id: item.id,
-            title: item.title, 
-            vignette: item.vignette, 
+            ...item, 
             selectionType, 
             quantity: (item.initialQuantity) ? item.initialQuantity : 0,
             dispatchCb: () => {}
@@ -56,12 +60,16 @@ const stateInitBuilder = (config:GridListModelProps) => {
 /**
  * GRID
  */
+
+const GridContext = createContext<{ items: GridCardProps[]; dispatch: Function }>({ items: [], dispatch: () => {} });
+
 type GridListModelProps = SlideBaseProps & {
     slideConfig: {
         mandatoryChoice: boolean                                                                // skippable
         multipleChoices: boolean                                                                // mono ou multi choix
         hasCart: boolean                                                                        // selection visible dans panier
         quantityChoices: boolean                                                                // possibilité de choisir la quantité des items
+        filters?: React.ReactNode                                                               // activation des filtres composant fourni
     },
     items: {
         id: string
@@ -80,20 +88,23 @@ export default function GridListModel(props:GridListModelProps) {
     const isNextDisabled = (_props.slideConfig.mandatoryChoice && itemSelectionCount === 0);
 
     return (
-        <article className={ styles["grm-SlideWrapper"] }>
-            <header className={ styles["grm-Header"] }>
-                <button className={ styles["grm-Header-BackBtn"] } onClick={ () => { history.back() } }><FontAwesomeIcon color="#ffffff" icon="arrow-left" size="xl" /></button>
-                <h1 className={ styles["grm-Header-Title"] }>{ _props.slideTitle }</h1>
-                { _props.slideConfig.hasCart && <button onClick={ () => alert('todo') } className={ styles["grm-Header-CartBtn"] }>Votre sélection <span>{ itemSelectionCount }</span></button> }
-                <button onClick={ _props.slideNextCb } disabled={ isNextDisabled } className={ styles["grm-Header-NextBtn"] }>{ _props.slideNextLabel }</button>
-            </header>
-            <menu className={ styles["grm-ContentGrid"] }>
-                { _items.map(item => {
-                    const { id, dispatchCb, ...rest } = item;
-                    return <GridCard key={ id } id={ id } {...rest} dispatchCb={ dispatchItemUpdate } />
-                })}
-            </menu>
-        </article>
+        <GridContext.Provider value={ { items: _items, dispatch: dispatchItemUpdate } }>
+            <article className={ styles["grm-SlideWrapper"] }>
+                <header className={ styles["grm-Header"] }>
+                    <button className={ styles["grm-Header-BackBtn"] } onClick={ () => { history.back() } }><FontAwesomeIcon color="#ffffff" icon="arrow-left" size="xl" /></button>
+                    <h1 className={ styles["grm-Header-Title"] }>{ _props.slideTitle }</h1>
+                    { _props.slideConfig.hasCart && <button onClick={ () => alert('todo') } className={ styles["grm-Header-CartBtn"] }>Votre sélection <span>{ itemSelectionCount }</span></button> }
+                    <button onClick={ _props.slideNextCb } disabled={ isNextDisabled } className={ styles["grm-Header-NextBtn"] }>{ _props.slideNextLabel }</button>
+                </header>
+                { _props.slideConfig.filters ?? null }
+                <menu className={ styles["grm-ContentGrid"] }>
+                    { _items.map(item => {
+                        const { id, dispatchCb, ...rest } = item;
+                        return <GridCard key={ id } id={ id } {...rest} dispatchCb={ dispatchItemUpdate } />
+                    })}
+                </menu>
+            </article>
+        </GridContext.Provider>
     )
 }
 
@@ -144,4 +155,67 @@ function GridCard(item:GridCardProps) {
             </footer>
         </section>
     );
+}
+
+/**
+ * BASE FILTER
+ */
+type BaseFilterProps = {
+    hasAllFilter: boolean
+    groupBy: Function
+}
+
+export function BaseFilter({ hasAllFilter, groupBy }:BaseFilterProps) {
+    const { items, dispatch } = useContext(GridContext);
+    const [filterState, setFilterState] = useState<{ filterName: string, isSelected: boolean, selectCb: Function }[]>([]);
+
+    const handleFilterClick = (filterName:string) => () => {
+        // interacted filter
+        const matchFilter = filterState.find(filter => filter.filterName === filterName);
+        if(!matchFilter || matchFilter.isSelected) return;
+
+        // update selected states
+        const newFilterState = filterState.map(filter => {
+            return (filter.filterName === filterName)
+                ? {...filter, isSelected: true}
+                : {...filter, isSelected: false}
+        });
+
+        // apply & dispatch filter update
+        setFilterState(newFilterState);
+        matchFilter.selectCb();
+    }
+
+    // initialise filters based on provided items and groupBy function
+    useEffect(() => {
+        const filtersWithoutCb:{ filterName: string }[] = Object.keys(groupBy(items)).map((groupName) => ({ filterName: groupName }));
+        let filters:{ filterName: string, isSelected: boolean, selectCb: Function }[] = [];
+        if(!hasAllFilter) {
+            // make first filter selected and dispatch filter function
+            filters = filtersWithoutCb.map((partialFilter, index) => {
+                const selectCb = () => { dispatch({ type: "filter update", payload: (item:any) => (item.forme === partialFilter.filterName) }) };
+                if(index === 0) {
+                    selectCb();
+                    return {...partialFilter, isSelected: true, selectCb };
+                } else {
+                    return {...partialFilter, isSelected: false, selectCb };
+                }
+            });
+        } else {
+            // add all filter and select it and dispatch identity function
+            filters = filtersWithoutCb.map(partialFilter => {
+                const selectCb = () => { dispatch({ type: "filter update", payload: (item:any) => (item.forme === partialFilter.filterName) }) };
+                return {...partialFilter, isSelected: false, selectCb };
+            });
+            filters.unshift({ filterName: "Tous", isSelected: true, selectCb: () => true });
+            dispatch({ type: "filter update", payload: () => true });
+        }
+        setFilterState(filters);
+    }, [items, groupBy, hasAllFilter]);
+
+    return (
+        <menu className={ styles["grf-ContentFilters"] }>
+            { filterState.map(filter => <button onClick={ handleFilterClick(filter.filterName) } className={ `${ styles["grf-FilterBtn"] } ${ (filter.isSelected) ? styles["grf-FilterBtn--active"] : '' }` }>{ filter.filterName }</button> )}
+        </menu>
+    )    
 }
