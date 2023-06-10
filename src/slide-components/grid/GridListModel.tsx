@@ -6,13 +6,15 @@ import { createContext, useContext, useEffect, useReducer, useState } from "reac
 import LodashGroupBy from "lodash/groupBy";
 import { produce } from "immer";
 import styles from "./GridListModel.module.scss";
+import { Modal } from "react-bootstrap";
 
 /**
  * STATE REDUCER
  */
 type GridState = {
-    items: GridCardProps[],
+    items: GridCardProps[]
     filter: Function
+    modal: null|'cart'|'incompatible'
 }
 function itemReducer(state:GridState, action:{ type:string, payload?:any }) {
     switch(true) {
@@ -41,6 +43,23 @@ function itemReducer(state:GridState, action:{ type:string, payload?:any }) {
                 draft.filter = action.payload;
             });
 
+        case (action.type === "show cart"):
+            return produce(state, draft => {
+                draft.modal = "cart";
+            });
+
+        case (action.type === "show incompatible modal"):
+            return produce(state, draft => {
+                draft.modal = "incompatible";
+            });
+
+        case (action.type === "hide cart"):
+        case (action.type === "hide incompatible modal"):
+        case (action.type === "hide any modal"):
+            return produce(state, draft => {
+                draft.modal = null;
+            });
+
         default:
             throw Error('Action inconnue');
     }
@@ -65,7 +84,7 @@ const stateInitBuilder = (config:GridListModelProps) => {
         }
     });
 
-    const initialState:GridState = { items: cardItems, filter: () => true };
+    const initialState:GridState = { items: cardItems, filter: () => true, modal: null };
 
     return initialState;
 }
@@ -74,7 +93,7 @@ const stateInitBuilder = (config:GridListModelProps) => {
  * GRID
  */
 
-const GridContext = createContext<{ items: GridCardProps[]; dispatch: Function }>({ items: [], dispatch: () => {} });
+const GridContext = createContext<{ items: GridCardProps[], modal:null|'cart'|'incompatible', dispatch: Function }>({ items: [], modal: null, dispatch: () => {} });
 
 type GridListModelProps = SlideBaseProps & {
     slideConfig: {
@@ -96,27 +115,28 @@ type GridListModelProps = SlideBaseProps & {
 
 export default function GridListModel(props:GridListModelProps) {
     const _props = Object.assign({}, SlideBasePropsDefaults, props);
-    const [state, dispatchItemUpdate] = useReducer(itemReducer, _props, stateInitBuilder);
+    const [state, dispatchUpdate] = useReducer(itemReducer, _props, stateInitBuilder);
     const itemSelectionCount:number = state.items.reduce((acc, curr) => ((curr?.quantity ?? 0) > 0) ? acc + 1 : acc, 0);
     const isNextDisabled = (_props.slideConfig.mandatoryChoice && itemSelectionCount === 0);
     const filteredItems = state.items.filter((state.filter as any));
 
     return (
-        <GridContext.Provider value={ { items: state.items, dispatch: dispatchItemUpdate } }>
+        <GridContext.Provider value={ { items: state.items, modal: state.modal, dispatch: dispatchUpdate } }>
             <article className={ styles["grm-SlideWrapper"] }>
                 <header className={ styles["grm-Header"] }>
                     <button className={ styles["grm-Header-BackBtn"] } onClick={ () => { history.back() } }><FontAwesomeIcon color="#ffffff" icon="arrow-left" size="xl" /></button>
                     <h1 className={ styles["grm-Header-Title"] }>{ _props.slideTitle }</h1>
-                    { _props.slideConfig.hasCart && <button onClick={ () => alert('todo') } className={ styles["grm-Header-CartBtn"] }>Votre sélection <span>{ itemSelectionCount }</span></button> }
+                    { _props.slideConfig.hasCart && <button onClick={ () => dispatchUpdate({ type: "show cart" }) } className={ styles["grm-Header-CartBtn"] }>Votre sélection <span>{ itemSelectionCount }</span></button> }
                     <button onClick={ _props.slideNextCb } disabled={ isNextDisabled } className={ styles["grm-Header-NextBtn"] }>{ _props.slideNextLabel }</button>
                 </header>
                 { _props.slideConfig.filters ?? null }
                 <menu className={ styles["grm-ContentGrid"] }>
                     { filteredItems.map(item => {
                         const { id, dispatchCb, ...rest } = item;
-                        return <GridCard key={ id } id={ id } {...rest} dispatchCb={ dispatchItemUpdate } />
+                        return <GridCard key={ id } id={ id } {...rest} dispatchCb={ dispatchUpdate } />
                     })}
                 </menu>
+                <CartModal />
             </article>
         </GridContext.Provider>
     )
@@ -236,4 +256,32 @@ export function BaseFilter({ hasAllFilter, groupBy }:BaseFilterProps) {
             { filterState.map(filter => <button onClick={ handleFilterClick(filter.filterName) } key={ filter.filterName } className={ `${ styles["grf-FilterBtn"] } ${ (filter.isSelected) ? styles["grf-FilterBtn--active"] : '' }` }>{ filter.filterName }</button> )}
         </menu>
     )    
+}
+
+/**
+ * CART MODAL
+ */
+function CartModal() {
+    const { items, modal, dispatch } = useContext(GridContext);
+    const refCount:number = items.reduce((acc, curr) => ((curr?.quantity ?? 0) > 0) ? acc + 1 : acc, 0);
+    const totalCount:number = items.reduce((acc, curr) => ((curr?.quantity ?? 0) > 0) ? acc + (curr?.quantity ?? 0) : acc, 0);
+    const selectedItems = items.filter(item => ((item.quantity ?? 0) > 0));
+
+    return (
+        <Modal show={ (modal === 'cart') }>
+            <Modal.Header>
+                <Modal.Title>Votre sélection</Modal.Title>
+                <p>{ totalCount } articles ({ refCount } références)</p>
+            </Modal.Header>
+            <Modal.Body>
+                { selectedItems.map(item => {
+                    const { id, dispatchCb, ...rest } = item;
+                    return <GridCard key={ id } id={ id } {...rest} dispatchCb={ dispatch } />
+                })}
+            </Modal.Body>
+            <Modal.Footer>
+                <button className={ styles["grm-Header-BackBtn"] } onClick={ () => dispatch({ type: "hide cart" }) }>Close</button>
+            </Modal.Footer>
+        </Modal>
+    )
 }
