@@ -26,7 +26,7 @@ function PoolBuilder():Pool {
         forme,
         estInversable: (forme === "irrégulière"),
         tailles: new Array(taillesCount).fill(null).map((_value, index) => tailleBuilder(index)),
-        silouhette: faker.image.image(200, 200),
+        silouhette: faker.image.url({ width: 200, height: 200}),
         illustrations: new Array(illustrationsCount).fill(null).map(() => ProductIllustrationBuilder("pool"))
     }
 }
