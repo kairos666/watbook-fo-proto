@@ -4,27 +4,36 @@ import { SlideBaseProps, SlideBasePropsDefaults } from "@/types/Slide";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { createContext, useContext, useEffect, useReducer, useState } from "react";
 import LodashGroupBy from "lodash/groupBy";
+import { produce } from "immer";
 import styles from "./GridListModel.module.scss";
 
 /**
  * STATE REDUCER
  */
-function itemReducer(state:GridCardProps[], action:{ type:string, payload?:any }) {
+type GridState = {
+    items: GridCardProps[],
+    filter: Function
+}
+function itemReducer(state:GridState, action:{ type:string, payload?:any }) {
     switch(true) {
         case (action.type === "add one"): 
-            return state.map(item => {
-                if(item.id === action.payload) {
-                    item.quantity = (item?.quantity ?? 0) + 1;
-                }
-
-                return item;
+            return produce(state, draft => {
+                draft.items = draft.items.map(item => {
+                    if(item.id === action.payload) {
+                        item.quantity = (item?.quantity ?? 0) + 1;
+                    }
+    
+                    return item;
+                })
             });
         
-        case (action.type === "remove one"): 
-            return state.map(item => {
-                if(item.id === action.payload) item.quantity = (item?.quantity ?? 0) - 1;
-
-                return item;
+        case (action.type === "remove one"):
+            return produce(state, draft => {
+                draft.items = draft.items.map(item => {
+                    if(item.id === action.payload) item.quantity = (item?.quantity ?? 0) - 1;
+    
+                    return item;
+                });
             });
 
         case (action.type === "filter update"):
@@ -55,7 +64,9 @@ const stateInitBuilder = (config:GridListModelProps) => {
         }
     });
 
-    return cardItems;
+    const initialState:GridState = { items: cardItems, filter: () => true };
+
+    return initialState;
 }
 
 /**
@@ -84,12 +95,12 @@ type GridListModelProps = SlideBaseProps & {
 
 export default function GridListModel(props:GridListModelProps) {
     const _props = Object.assign({}, SlideBasePropsDefaults, props);
-    const [_items, dispatchItemUpdate] = useReducer(itemReducer, _props, stateInitBuilder);
-    const itemSelectionCount:number = _items.reduce((acc, curr) => ((curr?.quantity ?? 0) > 0) ? acc + 1 : acc, 0);
+    const [state, dispatchItemUpdate] = useReducer(itemReducer, _props, stateInitBuilder);
+    const itemSelectionCount:number = state.items.reduce((acc, curr) => ((curr?.quantity ?? 0) > 0) ? acc + 1 : acc, 0);
     const isNextDisabled = (_props.slideConfig.mandatoryChoice && itemSelectionCount === 0);
 
     return (
-        <GridContext.Provider value={ { items: _items, dispatch: dispatchItemUpdate } }>
+        <GridContext.Provider value={ { items: state.items, dispatch: dispatchItemUpdate } }>
             <article className={ styles["grm-SlideWrapper"] }>
                 <header className={ styles["grm-Header"] }>
                     <button className={ styles["grm-Header-BackBtn"] } onClick={ () => { history.back() } }><FontAwesomeIcon color="#ffffff" icon="arrow-left" size="xl" /></button>
@@ -99,7 +110,7 @@ export default function GridListModel(props:GridListModelProps) {
                 </header>
                 { _props.slideConfig.filters ?? null }
                 <menu className={ styles["grm-ContentGrid"] }>
-                    { _items.map(item => {
+                    { state.items.map(item => {
                         const { id, dispatchCb, ...rest } = item;
                         return <GridCard key={ id } id={ id } {...rest} dispatchCb={ dispatchItemUpdate } />
                     })}
