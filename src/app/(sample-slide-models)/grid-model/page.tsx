@@ -1,16 +1,10 @@
-'use client';
-
 import PoolBuilder from "@/mock-data/PoolBuilder";
 import GridListModel, { BaseFilter } from "@/slide-components/grid/GridListModel";
-import groupBy from "lodash/groupBy";
 import { Metadata } from "next";
 
-export const metadata:Metadata = {
-    title: 'modèle : grille de produits'
-}
-
-export default function GridSample() {
-    const mockPools = new Array(12)
+// MOCK DATA SERVER FETCH
+async function getMockPools() {
+    return new Array(12)
         .fill(null)
         .map(() => PoolBuilder())
         .map(pool => ({
@@ -20,6 +14,14 @@ export default function GridSample() {
             vignette: pool.illustrations[0].src,
             initialQuantity: 0
         }));
+}
+
+export const metadata:Metadata = {
+    title: 'modèle : grille de produits'
+}
+
+export default async function GridSample() {
+    const mockPools = await getMockPools();
 
     const props = {
         slideTitle: "Choix de la forme et modèle",
@@ -28,7 +30,7 @@ export default function GridSample() {
             multipleChoices: false,
             hasCart: true,
             quantityChoices: true,
-            filters: <BaseFilter hasAllFilter groupBy={ (items:any) => { return groupBy(items, (item) => item.forme) } } />
+            filters: <BaseFilter hasAllFilter groupBy="forme" />
         },
         items: mockPools
     }

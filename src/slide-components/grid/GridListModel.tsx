@@ -3,6 +3,7 @@
 import { SlideBaseProps, SlideBasePropsDefaults } from "@/types/Slide";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { createContext, useContext, useEffect, useReducer, useState } from "react";
+import LodashGroupBy from "lodash/groupBy";
 import styles from "./GridListModel.module.scss";
 
 /**
@@ -162,10 +163,14 @@ function GridCard(item:GridCardProps) {
  */
 type BaseFilterProps = {
     hasAllFilter: boolean
-    groupBy: Function
+    groupBy: string|Function
 }
 
 export function BaseFilter({ hasAllFilter, groupBy }:BaseFilterProps) {
+    const _groupBy = (typeof groupBy === "function")
+        ? groupBy
+        : (itemsToFilter:any[]) => { return LodashGroupBy(itemsToFilter, (item) => item[groupBy]) };
+
     const { items, dispatch } = useContext(GridContext);
     const [filterState, setFilterState] = useState<{ filterName: string, isSelected: boolean, selectCb: Function }[]>([]);
 
@@ -188,7 +193,7 @@ export function BaseFilter({ hasAllFilter, groupBy }:BaseFilterProps) {
 
     // initialise filters based on provided items and groupBy function
     useEffect(() => {
-        const filtersWithoutCb:{ filterName: string }[] = Object.keys(groupBy(items)).map((groupName) => ({ filterName: groupName }));
+        const filtersWithoutCb:{ filterName: string }[] = Object.keys(_groupBy(items)).map((groupName) => ({ filterName: groupName }));
         let filters:{ filterName: string, isSelected: boolean, selectCb: Function }[] = [];
         if(!hasAllFilter) {
             // make first filter selected and dispatch filter function
@@ -215,7 +220,7 @@ export function BaseFilter({ hasAllFilter, groupBy }:BaseFilterProps) {
 
     return (
         <menu className={ styles["grf-ContentFilters"] }>
-            { filterState.map(filter => <button onClick={ handleFilterClick(filter.filterName) } className={ `${ styles["grf-FilterBtn"] } ${ (filter.isSelected) ? styles["grf-FilterBtn--active"] : '' }` }>{ filter.filterName }</button> )}
+            { filterState.map(filter => <button onClick={ handleFilterClick(filter.filterName) } key={ filter.filterName } className={ `${ styles["grf-FilterBtn"] } ${ (filter.isSelected) ? styles["grf-FilterBtn--active"] : '' }` }>{ filter.filterName }</button> )}
         </menu>
     )    
 }
