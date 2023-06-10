@@ -37,8 +37,9 @@ function itemReducer(state:GridState, action:{ type:string, payload?:any }) {
             });
 
         case (action.type === "filter update"):
-            console.info("TODO filter function update");
-            return state;
+            return produce(state, draft => {
+                draft.filter = action.payload;
+            });
 
         default:
             throw Error('Action inconnue');
@@ -98,6 +99,7 @@ export default function GridListModel(props:GridListModelProps) {
     const [state, dispatchItemUpdate] = useReducer(itemReducer, _props, stateInitBuilder);
     const itemSelectionCount:number = state.items.reduce((acc, curr) => ((curr?.quantity ?? 0) > 0) ? acc + 1 : acc, 0);
     const isNextDisabled = (_props.slideConfig.mandatoryChoice && itemSelectionCount === 0);
+    const filteredItems = state.items.filter((state.filter as any));
 
     return (
         <GridContext.Provider value={ { items: state.items, dispatch: dispatchItemUpdate } }>
@@ -110,7 +112,7 @@ export default function GridListModel(props:GridListModelProps) {
                 </header>
                 { _props.slideConfig.filters ?? null }
                 <menu className={ styles["grm-ContentGrid"] }>
-                    { state.items.map(item => {
+                    { filteredItems.map(item => {
                         const { id, dispatchCb, ...rest } = item;
                         return <GridCard key={ id } id={ id } {...rest} dispatchCb={ dispatchItemUpdate } />
                     })}
@@ -223,7 +225,7 @@ export function BaseFilter({ hasAllFilter, groupBy }:BaseFilterProps) {
                 const selectCb = () => { dispatch({ type: "filter update", payload: (item:any) => (item.forme === partialFilter.filterName) }) };
                 return {...partialFilter, isSelected: false, selectCb };
             });
-            filters.unshift({ filterName: "Tous", isSelected: true, selectCb: () => true });
+            filters.unshift({ filterName: "Tous", isSelected: true, selectCb: () => { dispatch({ type: "filter update", payload: () => true }) }});
             dispatch({ type: "filter update", payload: () => true });
         }
         setFilterState(filters);
