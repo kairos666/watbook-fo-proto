@@ -15,11 +15,13 @@ type GridState = {
     items: GridCardProps[]
     filter: Function
     modal: null|'cart'|'incompatible'
+    incompatibilityMap: undefined|{ [key:string]: string[] }
 }
 function itemReducer(state:GridState, action:{ type:string, payload?:any }) {
     switch(true) {
         case (action.type === "add one"): 
             return produce(state, draft => {
+                // select/add product
                 draft.items = draft.items.map(item => {
                     if(item.id === action.payload) {
                         item.quantity = (item?.quantity ?? 0) + 1;
@@ -27,6 +29,10 @@ function itemReducer(state:GridState, action:{ type:string, payload?:any }) {
     
                     return item;
                 })
+
+                // update compatibility state
+                const incompatibilitySolver = productCompatibilitySolver(draft.items.map(item => ({ ...item, quantity: (item.quantity) ? item.quantity : 0 })), draft.incompatibilityMap);
+                draft.items = draft.items.map(item => ({...item, isIncompatible: incompatibilitySolver(item.id)}));
             });
         
         case (action.type === "remove one"):
@@ -36,6 +42,10 @@ function itemReducer(state:GridState, action:{ type:string, payload?:any }) {
     
                     return item;
                 });
+
+                // update compatibility state
+                const incompatibilitySolver = productCompatibilitySolver(draft.items.map(item => ({ ...item, quantity: (item.quantity) ? item.quantity : 0 })), draft.incompatibilityMap);
+                draft.items = draft.items.map(item => ({...item, isIncompatible: incompatibilitySolver(item.id)}));
             });
 
         case (action.type === "filter update"):
@@ -69,22 +79,26 @@ function itemReducer(state:GridState, action:{ type:string, payload?:any }) {
  * STATE INITIALIZER
  */
 const stateInitBuilder = (config:GridListModelProps) => {
+    const incompatibilitySolver = productCompatibilitySolver(config.items.map(item => ({ ...item, quantity: (item.initialQuantity) ? item.initialQuantity : 0 })), config.slideConfig.incompatibilityMap);
     const cardItems:GridCardProps[] = config.items.map(item => {
-        let selectionType:'select'|'qt-cart'|'mono-cart' = (config.slideConfig.quantityChoices && config.slideConfig.hasCart)
+        const selectionType:'select'|'qt-cart'|'mono-cart' = (config.slideConfig.quantityChoices && config.slideConfig.hasCart)
             ? 'qt-cart'
             : (!config.slideConfig.quantityChoices && config.slideConfig.hasCart)
             ? 'mono-cart'
             : 'select';
 
+        const isIncompatible = incompatibilitySolver(item.id);
+
         return {
             ...item, 
             selectionType, 
             quantity: (item.initialQuantity) ? item.initialQuantity : 0,
-            dispatchCb: () => {}
+            dispatchCb: () => {},
+            isIncompatible
         }
     });
 
-    const initialState:GridState = { items: cardItems, filter: () => true, modal: null };
+    const initialState:GridState = { items: cardItems, filter: () => true, modal: null, incompatibilityMap: config.slideConfig.incompatibilityMap };
 
     return initialState;
 }
@@ -102,6 +116,7 @@ type GridListModelProps = SlideBaseProps & {
         hasCart: boolean                                                                        // selection visible dans panier
         quantityChoices: boolean                                                                // possibilité de choisir la quantité des items
         filters?: React.ReactNode                                                               // activation des filtres composant fourni
+        incompatibilityMap?: { [key:string]: string[] }                                         // for a given product ID, list incomaptible products
     },
     items: {
         id: string
@@ -109,8 +124,6 @@ type GridListModelProps = SlideBaseProps & {
         vignette: string
         initialQuantity: number
     }[]
-    // filters
-    // compatibility rules
 }
 
 export default function GridListModel(props:GridListModelProps) {
@@ -137,6 +150,7 @@ export default function GridListModel(props:GridListModelProps) {
                     })}
                 </menu>
                 <CartModal />
+                <IncompatibleModal />
             </article>
         </GridContext.Provider>
     )
@@ -151,12 +165,13 @@ type GridCardProps = {
     vignette: string
     selectionType: 'select'|'qt-cart'|'mono-cart'
     dispatchCb: Function
+    isIncompatible: boolean                                                                     // always false, unless selected another incompatible product
     detailsCb?: Function                                                                        // leave undefined if no details available
     quantity?: number                                                                           // quantity selected (qt-cart) otherwise either 0 or 1 
 }
 
 function GridCard(item:GridCardProps) {
-    const { id, title, vignette, selectionType, detailsCb, quantity, dispatchCb } = item;
+    const { id, title, vignette, selectionType, detailsCb, quantity, dispatchCb, isIncompatible } = item;
     const isSelected = (typeof quantity === 'number' && quantity >= 1);
     const detailLink = (detailsCb !== undefined) 
         ? <button onClick={ () => detailsCb() } className={ styles["grc-Card-DetailLink"] }><FontAwesomeIcon color="#004770" icon="magnifying-glass" /></button>
@@ -164,6 +179,7 @@ function GridCard(item:GridCardProps) {
 
     function callToActionSolver() {
         switch(true) {
+            case (isIncompatible): return <button onClick={ () => dispatchCb({ type: "show incompatible modal" }) } className={ styles["grc-Card-Incompatible"] }><FontAwesomeIcon color="#CC3636" icon="hand" /></button>;
             case (!isSelected && selectionType === 'select'): return <button onClick={ () => dispatchCb({ type: "add one", payload: id }) } className={ styles["grc-Card-Cta"] }>Sélectionner</button>;
             case (isSelected && selectionType === 'select'): return <button onClick={ () => dispatchCb({ type: "remove one", payload: id }) } className={ styles["grc-Card-Cta"] }>Désélectionner</button>;
             case (!isSelected && selectionType === 'qt-cart'):
@@ -325,4 +341,43 @@ function CartProductCard(item:CartProductCardProps) {
             </footer>
         </section>
     );
+}
+
+/**
+ * INCOMPATIBLE MODAL
+ */
+ function IncompatibleModal() {
+    const { modal, dispatch } = useContext(GridContext);
+
+    return (
+        <Modal show={ (modal === 'incompatible') } dialogClassName="gricp-IncompatibleModal" onHide={ () => dispatch({ type: "hide cart" }) }>
+            <Modal.Header closeButton>
+                <Modal.Title>Produit incompatible</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>Certains des produits que vous avez sélectionnés ne sont pas compatibles avec ce produit.<br />Veuillez retirer les produits incompatibles pour sélectionner celui-ci.</p>
+            </Modal.Body>
+        </Modal>
+    )
+}
+
+/**
+ * UTILS
+ */
+// Incompatibility solver
+const productCompatibilitySolver = (items:{ id:string, quantity:number }[], incompatibilityMap:undefined|{ [key:string]: string[] }) => {
+    // if no incompatibilityMap provided leave early
+    if(incompatibilityMap === undefined) return () => false;
+
+    const selectedIDs:string[] = items.filter(item => (item.quantity > 0)).map(item => item.id);
+    const incompatibleIDs:string[] = selectedIDs.reduce((acc, curr) => {
+        const relevantIncompatibilities:string[] = incompatibilityMap[curr] ?? [];
+        acc.push(...relevantIncompatibilities);;
+        return acc;
+    }, ([] as string[]));
+
+    // removed duplicate
+    const uniqueIncompatibleIDs:string[] = Array.from(new Set(incompatibleIDs));
+
+    return (productId:string) => uniqueIncompatibleIDs.includes(productId)
 }

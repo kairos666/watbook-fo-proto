@@ -1,8 +1,9 @@
 import PoolBuilder from "@/mock-data/PoolBuilder";
 import GridListModel, { BaseFilter } from "@/slide-components/grid/GridListModel";
+import { fakerFR as faker } from '@faker-js/faker';
 import { Metadata } from "next";
 
-// MOCK DATA SERVER FETCH
+// MOCK DATA SERVER FETCH - POOLS
 async function getMockPools() {
     return new Array(12)
         .fill(null)
@@ -16,12 +17,37 @@ async function getMockPools() {
         }));
 }
 
+// MOCK DATA SERVER FETCH - INCOMPATIBILITIES (each product has an incomppatibility list)
+async function getMockIncompatibilities(itemIds:string[]):Promise<{ [key:string]: string[] }> {
+    const incompatMap = itemIds.reduce((map, itemId) => {
+        map[itemId] = [];
+        return map;
+    }, ({} as { [key:string]: string[] }));
+
+    // assign random incompats
+    const incompatSeeds = faker.helpers.arrayElements(itemIds, { min:1, max: 5 });
+    incompatSeeds.forEach(incompatSeed => {
+        const incompatTargets = faker.helpers.arrayElements(itemIds.filter(src => (src !== incompatSeed)), { min:1, max: 4 });
+
+        incompatMap[incompatSeed].push(...incompatTargets);
+        incompatTargets.forEach(target => {
+            incompatMap[target].push(incompatSeed);
+        });
+    });
+
+    // clean duplicates
+    Object.entries(incompatMap).forEach(([property, value]) => { incompatMap[property] = Array.from(new Set(value)) });
+
+    return incompatMap;
+} 
+
 export const metadata:Metadata = {
     title: 'modèle : grille de produits'
 }
 
 export default async function GridSample() {
     const mockPools = await getMockPools();
+    const mockCompatMap = await getMockIncompatibilities(mockPools.map(pool => pool.id));
 
     const props = {
         slideTitle: "Choix de la forme et modèle",
@@ -29,8 +55,9 @@ export default async function GridSample() {
             mandatoryChoice: true,
             multipleChoices: false,
             hasCart: true,
-            quantityChoices: false,
-            filters: <BaseFilter hasAllFilter groupBy="forme" />
+            quantityChoices: true,
+            filters: <BaseFilter hasAllFilter groupBy="forme" />,
+            incompatibilityMap: mockCompatMap
         },
         items: mockPools
     }
