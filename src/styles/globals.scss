@@ -31,25 +31,29 @@ body {
 
 // modals fine tuning
 .modal-dialog {
+    max-width: 50vw;
     &.grcrt-CartModal {
         max-width: unquote("calc(100vw - #{ $sidebarWidth } - #{ $std-gap * 2 })");
 
-        .modal-header { border: none; }
-        .modal-title { 
-            font-weight: 700;
-            font-size: 40px;
-            line-height: 54px;
-            color: $text-color; 
-        }
-        .btn-close { font-size: 30px; }
-
         .modal-content {
-            height: unquote("calc(100vh - #{ $topbarHeight } - #{ $std-gap * 2 })");
             background: url('/parasol-deco.svg') no-repeat 100% 0, linear-gradient(360deg, #FFFFFF 31.54%, #DDE3EF 131.08%);
-            border-radius: 1rem;
+            height: unquote("calc(100vh - #{ $topbarHeight } - #{ $std-gap * 2 })");
         }
     }
     
+    .modal-header { border: none; }
+    .modal-title { 
+        font-weight: 700;
+        font-size: 40px;
+        line-height: 54px;
+        color: $text-color; 
+    }
+    .btn-close { font-size: 30px; }
+
+    .modal-content {
+        background-color: #FFFFFF;
+        border-radius: 1rem;
+    }
 
     .modal.fade & {
         top: unquote("calc(50% + #{ $topbarHeight * 0.5 })");

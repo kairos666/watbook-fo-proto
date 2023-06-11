@@ -137,6 +137,7 @@ export default function GridListModel(props:GridListModelProps) {
                     })}
                 </menu>
                 <CartModal />
+                <IncompatibleModal />
             </article>
         </GridContext.Provider>
     )
@@ -325,4 +326,22 @@ function CartProductCard(item:CartProductCardProps) {
             </footer>
         </section>
     );
+}
+
+/**
+ * INCOMPATIBLE MODAL
+ */
+ function IncompatibleModal() {
+    const { modal, dispatch } = useContext(GridContext);
+
+    return (
+        <Modal show={ (modal === 'incompatible') } dialogClassName="gricp-IncompatibleModal" onHide={ () => dispatch({ type: "hide cart" }) }>
+            <Modal.Header closeButton>
+                <Modal.Title>Produit incompatible</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+                <p>Certains des produits que vous avez sélectionnés ne sont pas compatibles avec ce produit.<br />Veuillez retirer les produits incompatibles pour sélectionner celui-ci.</p>
+            </Modal.Body>
+        </Modal>
+    )
 }
