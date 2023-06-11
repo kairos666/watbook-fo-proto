@@ -39,6 +39,10 @@ body {
             background: url('/parasol-deco.svg') no-repeat 100% 0, linear-gradient(360deg, #FFFFFF 31.54%, #DDE3EF 131.08%);
             height: unquote("calc(100vh - #{ $topbarHeight } - #{ $std-gap * 2 })");
         }
+
+        .modal-body {
+            overflow-y: auto;
+        }
     }
     
     .modal-header { border: none; }

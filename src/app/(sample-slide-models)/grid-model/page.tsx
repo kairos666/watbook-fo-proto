@@ -48,7 +48,6 @@ export const metadata:Metadata = {
 export default async function GridSample() {
     const mockPools = await getMockPools();
     const mockCompatMap = await getMockIncompatibilities(mockPools.map(pool => pool.id));
-    console.log(mockCompatMap);
 
     const props = {
         slideTitle: "Choix de la forme et modèle",
@@ -56,8 +55,9 @@ export default async function GridSample() {
             mandatoryChoice: true,
             multipleChoices: false,
             hasCart: true,
-            quantityChoices: false,
-            filters: <BaseFilter hasAllFilter groupBy="forme" />
+            quantityChoices: true,
+            filters: <BaseFilter hasAllFilter groupBy="forme" />,
+            incompatibilityMap: mockCompatMap
         },
         items: mockPools
     }
