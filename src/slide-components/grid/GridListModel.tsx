@@ -249,7 +249,7 @@ export function BaseFilter({ hasAllFilter, groupBy }:BaseFilterProps) {
             dispatch({ type: "filter update", payload: () => true });
         }
         setFilterState(filters);
-    }, [items, groupBy, hasAllFilter]);
+    }, [groupBy, hasAllFilter]);
 
     return (
         <menu className={ styles["grf-ContentFilters"] }>
@@ -268,20 +268,61 @@ function CartModal() {
     const selectedItems = items.filter(item => ((item.quantity ?? 0) > 0));
 
     return (
-        <Modal show={ (modal === 'cart') }>
-            <Modal.Header>
+        <Modal show={ (modal === 'cart') } dialogClassName="grcrt-CartModal" onHide={ () => dispatch({ type: "hide cart" }) }>
+            <Modal.Header closeButton>
                 <Modal.Title>Votre sélection</Modal.Title>
-                <p>{ totalCount } articles ({ refCount } références)</p>
             </Modal.Header>
             <Modal.Body>
-                { selectedItems.map(item => {
-                    const { id, dispatchCb, ...rest } = item;
-                    return <GridCard key={ id } id={ id } {...rest} dispatchCb={ dispatch } />
-                })}
+                <p className={ styles["grcrt-Subtitle"] }>{ totalCount } articles, { refCount } références</p>
+                <section className={ styles["grcrt-CartSection"] }>
+                    {/* <header>Modèle</header> */}
+                    { selectedItems.map(item => {
+                        const { id, dispatchCb, ...rest } = item;
+                        return <CartProductCard key={ id } id={ id } {...rest} dispatchCb={ dispatch } />
+                    })}
+                </section>
             </Modal.Body>
-            <Modal.Footer>
-                <button className={ styles["grm-Header-BackBtn"] } onClick={ () => dispatch({ type: "hide cart" }) }>Close</button>
-            </Modal.Footer>
         </Modal>
     )
+}
+
+/**
+ * CART PRODUCT CARD
+ */
+ type CartProductCardProps = {
+    id: string
+    title: string
+    vignette: string
+    selectionType: 'select'|'qt-cart'|'mono-cart'
+    dispatchCb: Function
+    quantity?: number
+}
+
+function CartProductCard(item:CartProductCardProps) {
+    const { id, title, vignette, selectionType, quantity, dispatchCb } = item;
+    if(selectionType === 'select') {
+        console.info(`cart not compatible with selection`);
+        return null;
+    }
+
+    const isSelected = (typeof quantity === 'number' && quantity >= 1);
+
+    function callToActionSolver() {
+        switch(true) {
+            case (!isSelected && selectionType === 'qt-cart'):
+            case (!isSelected && selectionType === 'mono-cart'): return <button onClick={ () => dispatchCb({ type: "add one", payload: id }) } className={ styles["grc-Card-Cta"] }>+</button>;
+            case (isSelected && selectionType === 'qt-cart'): return <div className={ styles["grc-Card-CtaQtSelector"] }><button onClick={ () => dispatchCb({ type: "remove one", payload: id }) } className={ styles["grc-Card-CtaDecrement"] }>-</button><span className={ styles["grc-Card-CtaCount"] }>{ quantity }</span><button onClick={ () => dispatchCb({ type: "add one", payload: id }) } className={ styles["grc-Card-CtaIncrement"] }>+</button></div>;
+            case (isSelected && selectionType === 'mono-cart'): return <button onClick={ () => dispatchCb({ type: "remove one", payload: id }) } className={ styles["grc-Card-CtaRemoveFromCart"] }><FontAwesomeIcon color="#004770" icon="trash" /></button>;
+        }
+    }
+
+    return (
+        <section className={ styles["grcpc-Card"] }>
+            <img className={ styles["grcpc-Card-Vignette"] } src={ vignette } alt="product image" />
+            <span className={ styles["grcpc-Card-Description-Label"] }>{ title }</span>
+            <footer className={ styles["grcpc-Card-Description"] }>
+                { callToActionSolver() }
+            </footer>
+        </section>
+    );
 }

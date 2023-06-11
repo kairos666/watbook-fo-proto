@@ -29,7 +29,7 @@ export default async function GridSample() {
             mandatoryChoice: true,
             multipleChoices: false,
             hasCart: true,
-            quantityChoices: true,
+            quantityChoices: false,
             filters: <BaseFilter hasAllFilter groupBy="forme" />
         },
         items: mockPools
