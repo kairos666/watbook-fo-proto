@@ -54,8 +54,8 @@ export default async function GridSample() {
         slideConfig: {
             mandatoryChoice: true,
             multipleChoices: false,
-            hasCart: true,
-            quantityChoices: true,
+            hasCart: false,
+            quantityChoices: false,
             filters: <BaseFilter hasAllFilter groupBy="forme" />,
             incompatibilityMap: mockCompatMap
         },

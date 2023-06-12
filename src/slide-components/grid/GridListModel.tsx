@@ -16,10 +16,11 @@ type GridState = {
     filter: Function
     modal: null|'cart'|'incompatible'
     incompatibilityMap: undefined|{ [key:string]: string[] }
+    isMultiple: boolean
 }
 function itemReducer(state:GridState, action:{ type:string, payload?:any }) {
     switch(true) {
-        case (action.type === "add one"): 
+        case (action.type === "add one" && state.isMultiple): 
             return produce(state, draft => {
                 // select/add product
                 draft.items = draft.items.map(item => {
@@ -33,6 +34,20 @@ function itemReducer(state:GridState, action:{ type:string, payload?:any }) {
                 // update compatibility state
                 const incompatibilitySolver = productCompatibilitySolver(draft.items.map(item => ({ ...item, quantity: (item.quantity) ? item.quantity : 0 })), draft.incompatibilityMap);
                 draft.items = draft.items.map(item => ({...item, isIncompatible: incompatibilitySolver(item.id)}));
+            });
+
+        case (action.type === "add one" && !state.isMultiple):
+            return produce(state, draft => {
+                // toggle/select product
+                draft.items = draft.items.map(item => {
+                    if(item.id === action.payload) {
+                        item.quantity = (item?.quantity ?? 0) + 1;
+                    } else {
+                        item.quantity = 0;
+                    }
+    
+                    return item;
+                })
             });
         
         case (action.type === "remove one"):
@@ -94,11 +109,12 @@ const stateInitBuilder = (config:GridListModelProps) => {
             selectionType, 
             quantity: (item.initialQuantity) ? item.initialQuantity : 0,
             dispatchCb: () => {},
-            isIncompatible
+            isIncompatible,
+            //detailsCb: () => {}
         }
     });
 
-    const initialState:GridState = { items: cardItems, filter: () => true, modal: null, incompatibilityMap: config.slideConfig.incompatibilityMap };
+    const initialState:GridState = { items: cardItems, filter: () => true, modal: null, incompatibilityMap: config.slideConfig.incompatibilityMap, isMultiple: config.slideConfig.multipleChoices };
 
     return initialState;
 }
