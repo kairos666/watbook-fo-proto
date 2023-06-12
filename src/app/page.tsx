@@ -9,18 +9,36 @@ export default function Home() {
                 </header>
                 <div className="row mb-4">
                     <section className="col">
+                        <h2>Grille à choix unique</h2>
+                        <Link href="/grid-model?usecase=unique-choice-mandatory" target="_blank">Choix unique et obligatoire</Link>
+                        <br/>
+                        <Link href="/grid-model?usecase=unique-choice-filters-customnext" target="_blank">Choix unique optionnel et bouton suivant custom avec des filtres</Link>
+                    </section>
+                    <section className="col">
+                        <h2>Grille à choix multiple</h2>
+                        <Link href="/grid-model?usecase=multiple-choices-filters-mandatory" target="_blank">Multiples, obligatoire (au moins 1) et filtres</Link>
+                        <br/>
+                        <Link href="/grid-model?usecase=multiple-choices-filters-cart" target="_blank">Multiples, filtres, panier mais pas de quantités</Link>
+                        <br/>
+                        <Link href="/grid-model?usecase=multiple-choices-filters-cart-quantity-mandatory" target="_blank">Multiples, filtres, panier, quantités, obligatoire</Link>
+                        <br/>
+                        <Link href="/grid-model?usecase=multiple-choices-filters-cart-compat" target="_blank">Multiples, filtres, panier, compatibilité entre produits mais pas de quantités</Link>
+                        <br/>
+                        <Link href="/grid-model?usecase=multiple-choices-nofilters-cart-quantity-compat-mandatory" target="_blank">Multiples, panier, quantités, obligatoire, compatibilités, pas de filtres</Link>
+                    </section>
+                </div>
+                <div className="row mb-4">
+                    <section className="col">
                         <h2>Contenu</h2>
                         <Link href="/free-content-model">Modèle de contenu libre</Link>
-                        <br/>
-                        <Link href="/grid-model">Modèle de grille</Link>
                     </section>
                     <section className="col">
                         <h2>Question</h2>
                         <Link href="/choice-question-model">Modèle de question à choix unique ou multiple</Link>
                         <br/>
-                        <Link href="#">Modèle de question à fourchette de prix</Link>
+                        <Link href="#">TODO Modèle de question à fourchette de prix</Link>
                         <br/>
-                        <Link href="#">Modèle de question de date</Link>
+                        <Link href="#">TODO Modèle de question de date</Link>
                     </section>
                 </div>
                 <div className="row mb-4">
@@ -30,7 +48,7 @@ export default function Home() {
                     </section>
                     <section className="col">
                         <h2>Carousel</h2>
-                        <Link href="#">Modèle de carousel d'images</Link>
+                        <Link href="#">TODO Modèle de carousel d'images</Link>
                     </section>
                 </div>
             </article>
