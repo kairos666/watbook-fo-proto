@@ -87,18 +87,50 @@ export function ConfigCaracteristic({ caracteristic }:ConfigCaracteristicProps) 
         : (possibleValuesCount > 1)
         ? "success"
         : "warning";
+    
+    const valuesFormatter = (values :{ value: string }[]) => {
+        switch(true) {
+            case (values.length > 1):
+                return <span>{ (caracteristic.values as any[]).map(valueObj => valueObj.value).join(', ') } <small style={ { color: "var(--bs-danger)" } }><i>PLUSIEURS VALEURS</i></small></span>
+            case (values.length === 0):
+                return <small style={ { color: "var(--bs-danger)" } }><i>NON REMPLI</i></small>
+
+            default:
+                return values[0].value
+        }
+    }
 
     return (
-        <section className="mb-3">
-            <header>
-                <h3>Caracteristic : { caracteristic.id }</h3>
+        <details className="mb-3" open>
+            <summary><span className="h4">{ caracteristic.id } = { valuesFormatter(caracteristic.values) }</span></summary>
+            <div className="mt-2">
                 <Stack direction="horizontal" gap={2}>
                     <Badge pill bg={ valueBG }>values : { valuesCount }</Badge>
                     <Badge pill bg={ possibleValuesBG }>Possible values : { possibleValuesCount }</Badge>
                 </Stack>
-            </header>
-            <p>TODO</p>
-        </section>
+                { (caracteristic.possibleValues && caracteristic.possibleValues.length !== 0)
+                    ?   <Table striped hover size="sm">
+                            <thead>
+                                <tr>
+                                    <th>valueLow</th>
+                                    <th>selectable</th>
+                                    <th>intervalType</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                { (caracteristic.possibleValues as any[]).sort((a, b) => (a.selectable && !b.selectable) ? -1 : (!a.selectable && b.selectable) ? 1 : 0).map((pValueObj, index) => (
+                                    <tr key={ index }>
+                                        <td>{ pValueObj?.valueLow ?? <small style={ { color: "var(--bs-danger)" } }><i>NON REMPLI</i></small> }</td>
+                                        <td>{ (typeof pValueObj.selectable !== 'undefined') ? String(pValueObj.selectable) : <small style={ { color: "var(--bs-danger)" } }><i>NON REMPLI</i></small> }</td>
+                                        <td>{ pValueObj?.intervalType ?? <small style={ { color: "var(--bs-danger)" } }><i>NON REMPLI</i></small> }</td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </Table>
+                    :   <p>AUCUNES VALEURS POSSIBLES FOURNIES</p>
+                }
+            </div>
+        </details>
     )
 }
 
@@ -108,15 +140,14 @@ type ConfigSubItemProps = {
 
 export function ConfigSubItem({ subItem }:ConfigSubItemProps) {
     return (
-        <section className="mb-3">
-            <header>
-                <h3>Subitem : { subItem.id } / { subItem.key }</h3>
+        <details className="mb-3">
+            <summary>Subitem : { subItem.id } / { subItem.key }
                 <Stack direction="horizontal" gap={2}>
                     <Badge bg="secondary">selectable : { String(subItem.selectable) }</Badge>
                     <Badge bg="secondary">quantity : { subItem.quantity.value }</Badge>
                     <Badge bg="secondary">salesRelevant : { String(subItem.salesRelevant) }</Badge>
                 </Stack>
-            </header>
+            </summary>
             <Table striped hover size="sm">
                 <thead>
                     <tr>
@@ -137,6 +168,6 @@ export function ConfigSubItem({ subItem }:ConfigSubItemProps) {
                     })}
                 </tbody>
             </Table>
-        </section>
+        </details>
     )
 }

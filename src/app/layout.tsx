@@ -1,7 +1,6 @@
 import { Metadata } from 'next';
 import 'bootstrap/scss/bootstrap.scss';
 import '../styles/globals.scss';
-import GlobalNavigation from './GlobalNavigation';
 
 // FONTS
 import { Inter } from 'next/font/google';
@@ -16,9 +15,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="fr">
             <body className={inter.className}>
-                <GlobalNavigation>
-                    { children }
-                </GlobalNavigation>
+                { children }
             </body>
         </html>
     )
