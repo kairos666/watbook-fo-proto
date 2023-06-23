@@ -9,6 +9,17 @@ export default function Home() {
                 </header>
                 <div className="row mb-4">
                     <section className="col">
+                        <h2>SAP RPA - configurations</h2>
+                        <Link href="/configuration-analyzer" target="_blank">Configuration V0</Link>
+                    </section>
+                </div>
+            </article>
+            <article>
+                <header>
+                    <h1>Echantillon de modèle de slides</h1>
+                </header>
+                <div className="row mb-4">
+                    <section className="col">
                         <h2>Grille à choix unique</h2>
                         <Link href="/grid-model?usecase=unique-choice-mandatory" target="_blank">Choix unique et obligatoire</Link>
                         <br/>
