@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import config from "./configuration_V0.json";
 import { ConfigCaracteristic, ConfigPricingTable, ConfigSubItem, ConfigTitle, ConfigVariantConditionsTable } from "./ConfigParser";
+import AnalyzerMenu from "./AnalyzerMenu";
 
 export const metadata:Metadata = {
     title: 'configuration analyzer'
@@ -9,8 +10,11 @@ export const metadata:Metadata = {
 export default function MockGenerator() {
     return (
         <main className="container">
-            <div className="mb-5">
+            <div className="mt-5 mb-3">
                 <ConfigTitle config={ config } />
+            </div>
+            <div className="mb-5">
+                <AnalyzerMenu />
             </div>
             <div className="row mb-4">                
                 <section className="col">

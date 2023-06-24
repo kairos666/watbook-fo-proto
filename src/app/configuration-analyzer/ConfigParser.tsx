@@ -3,6 +3,7 @@
 import Badge from 'react-bootstrap/Badge';
 import Stack from 'react-bootstrap/Stack';
 import Table from 'react-bootstrap/Table';
+import { useConfigAnalyzerState } from './useConfigAnalyzerState';
 
 type ConfigParserProps = {
     config:any
@@ -75,6 +76,7 @@ type ConfigCaracteristicProps = {
 }
 
 export function ConfigCaracteristic({ caracteristic }:ConfigCaracteristicProps) {
+    const { isOpenAllDetails } = useConfigAnalyzerState(state => ({ isOpenAllDetails: state.isOpenAllDetails }));
     const valuesCount = caracteristic.values.length;
     const possibleValuesCount = caracteristic.possibleValues?.length ?? 0;
     const valueBG = (valuesCount === 0)
@@ -101,7 +103,7 @@ export function ConfigCaracteristic({ caracteristic }:ConfigCaracteristicProps) 
     }
 
     return (
-        <details className="mb-3" open>
+        <details className="mb-3" open={ isOpenAllDetails }>
             <summary><span className="h4">{ caracteristic.id } = { valuesFormatter(caracteristic.values) }</span></summary>
             <div className="mt-2">
                 <Stack direction="horizontal" gap={2}>
@@ -139,8 +141,10 @@ type ConfigSubItemProps = {
 }
 
 export function ConfigSubItem({ subItem }:ConfigSubItemProps) {
+    const { isOpenAllDetails } = useConfigAnalyzerState(state => ({ isOpenAllDetails: state.isOpenAllDetails }));
+
     return (
-        <details className="mb-3">
+        <details className="mb-3" open={ isOpenAllDetails }>
             <summary>Subitem : { subItem.id } / { subItem.key }
                 <Stack direction="horizontal" gap={2}>
                     <Badge bg="secondary">selectable : { String(subItem.selectable) }</Badge>
