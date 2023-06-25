@@ -10,9 +10,10 @@ type ConfigParserProps = {
 }
 
 export function ConfigTitle({ config }:ConfigParserProps) {
+    const { t } = useConfigAnalyzerState(state => ({ t: state.t }));
     return (
         <>
-            <h1>CONFIG ID : { config.id }</h1>
+            <h1>CONFIG ID : { t(config.id) }</h1>
             <Stack direction="horizontal" gap={2}>
                 <Badge bg="secondary">market : { config.market }</Badge>
                 <Badge bg="secondary">country : { config.country }</Badge>
@@ -76,6 +77,7 @@ type ConfigCaracteristicProps = {
 }
 
 export function ConfigCaracteristic({ caracteristic }:ConfigCaracteristicProps) {
+    const { t } = useConfigAnalyzerState(state => ({ t: state.t }));
     const { isOpenAllDetails } = useConfigAnalyzerState(state => ({ isOpenAllDetails: state.isOpenAllDetails }));
     const valuesCount = caracteristic.values.length;
     const possibleValuesCount = caracteristic.possibleValues?.length ?? 0;
@@ -104,7 +106,7 @@ export function ConfigCaracteristic({ caracteristic }:ConfigCaracteristicProps) 
 
     return (
         <details className="mb-3" open={ isOpenAllDetails }>
-            <summary><span className="h4">{ caracteristic.id } = { valuesFormatter(caracteristic.values) }</span></summary>
+            <summary><span className="h4">{ t(caracteristic.id) } = { valuesFormatter(caracteristic.values) }</span></summary>
             <div className="mt-2">
                 <Stack direction="horizontal" gap={2}>
                     <Badge pill bg={ valueBG }>values : { valuesCount }</Badge>
@@ -141,6 +143,7 @@ type ConfigSubItemProps = {
 }
 
 export function ConfigSubItem({ subItem }:ConfigSubItemProps) {
+    const { t } = useConfigAnalyzerState(state => ({ t: state.t }));
     const { isOpenAllDetails } = useConfigAnalyzerState(state => ({ isOpenAllDetails: state.isOpenAllDetails }));
 
     return (
@@ -164,7 +167,7 @@ export function ConfigSubItem({ subItem }:ConfigSubItemProps) {
                     { (subItem.characteristics as any[]).map((item, index) => {
                         return (
                             <tr key={ `subitem-carac-${ index }` }>
-                                <td>{ item.id }</td>
+                                <td>{ t(item.id) }</td>
                                 <td>{ (item.values as any[]).map((valItem, valIndex) => <span key={ `subitem-carac-${ index }-${ valIndex }` }>{ valItem.value } (by { valItem.author })</span>) }</td>
                                 <td>{ item.possibleValues.length }</td>
                             </tr>
