@@ -10,11 +10,11 @@ export const metadata:Metadata = {
 export default function MockGenerator() {
     return (
         <main className="container">
-            <div className="mt-5 mb-3">
-                <ConfigTitle config={ config } />
-            </div>
-            <div className="mb-5">
+            <div className="mt-3 position-sticky top-0 end-0">
                 <AnalyzerMenu />
+            </div>
+            <div className="mt-3 mb-3">
+                <ConfigTitle config={ config } />
             </div>
             <div className="row mb-4">                
                 <section className="col">

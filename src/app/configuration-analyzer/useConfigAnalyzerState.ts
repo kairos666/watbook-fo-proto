@@ -2,14 +2,14 @@ import { create } from 'zustand';
 
 interface ConfigAnalyzerState {
     isOpenAllDetails: boolean
-    isTranslated: boolean
+    translation: "tech"|"EN"|"FR"|"DE"|"ES"
     toggleOpen: () => void
-    toggleTranslation: () => void
+    translateTo: (target:"tech"|"EN"|"FR"|"DE"|"ES") => void
 }
 
 export const useConfigAnalyzerState = create<ConfigAnalyzerState>((set) => ({
     isOpenAllDetails: false,
-    isTranslated: false,
+    translation: "tech",
     toggleOpen: () => set(({ isOpenAllDetails }) => ({ isOpenAllDetails: !isOpenAllDetails })),
-    toggleTranslation: () => set(({ isTranslated }) => ({ isTranslated: !isTranslated }))
+    translateTo: (target) => set(() => ({ translation: target }))
 }))
