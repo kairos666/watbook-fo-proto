@@ -10,10 +10,9 @@ type ConfigParserProps = {
 }
 
 export function ConfigTitle({ config }:ConfigParserProps) {
-    const { t } = useConfigAnalyzerState(state => ({ t: state.t }));
     return (
         <>
-            <h1>CONFIG ID : { t(config.id) }</h1>
+            <h1>CONFIG ID : { config.id }</h1>
             <Stack direction="horizontal" gap={2}>
                 <Badge bg="secondary">market : { config.market }</Badge>
                 <Badge bg="secondary">country : { config.country }</Badge>
@@ -92,21 +91,21 @@ export function ConfigCaracteristic({ caracteristic }:ConfigCaracteristicProps) 
         ? "success"
         : "warning";
     
-    const valuesFormatter = (values :{ value: string }[]) => {
+    const valuesFormatter = (values :{ value: string }[], id:string) => {
         switch(true) {
             case (values.length > 1):
-                return <span>{ (caracteristic.values as any[]).map(valueObj => valueObj.value).join(', ') } <small style={ { color: "var(--bs-danger)" } }><i>PLUSIEURS VALEURS</i></small></span>
+                return <span>{ (caracteristic.values as any[]).map(valueObj => t(valueObj.value, `caracteristic.${ id }.possibleValues.`)).join(', ') } <small style={ { color: "var(--bs-danger)" } }><i>PLUSIEURS VALEURS</i></small></span>
             case (values.length === 0):
                 return <small style={ { color: "var(--bs-danger)" } }><i>NON REMPLI</i></small>
 
             default:
-                return values[0].value
+                return t(values[0].value, `caracteristic.${ id }.possibleValues.`);
         }
     }
 
     return (
         <details className="mb-3" open={ isOpenAllDetails }>
-            <summary><span className="h4">{ t(caracteristic.id) } = { valuesFormatter(caracteristic.values) }</span></summary>
+            <summary><span className="h4">{ t(caracteristic.id, `caracteristic.`) } = { valuesFormatter(caracteristic.values, caracteristic.id) }</span></summary>
             <div className="mt-2">
                 <Stack direction="horizontal" gap={2}>
                     <Badge pill bg={ valueBG }>values : { valuesCount }</Badge>
@@ -122,13 +121,19 @@ export function ConfigCaracteristic({ caracteristic }:ConfigCaracteristicProps) 
                                 </tr>
                             </thead>
                             <tbody>
-                                { (caracteristic.possibleValues as any[]).sort((a, b) => (a.selectable && !b.selectable) ? -1 : (!a.selectable && b.selectable) ? 1 : 0).map((pValueObj, index) => (
-                                    <tr key={ index }>
-                                        <td>{ pValueObj?.valueLow ?? <small style={ { color: "var(--bs-danger)" } }><i>NON REMPLI</i></small> }</td>
-                                        <td>{ (typeof pValueObj.selectable !== 'undefined') ? String(pValueObj.selectable) : <small style={ { color: "var(--bs-danger)" } }><i>NON REMPLI</i></small> }</td>
-                                        <td>{ pValueObj?.intervalType ?? <small style={ { color: "var(--bs-danger)" } }><i>NON REMPLI</i></small> }</td>
-                                    </tr>
-                                ))}
+                                { (caracteristic.possibleValues as any[]).sort((a, b) => (a.selectable && !b.selectable) ? -1 : (!a.selectable && b.selectable) ? 1 : 0).map((pValueObj, index) => {
+                                    const rawValue = pValueObj?.valueLow ?? null;
+                                    const tradValue = (rawValue === null)
+                                        ? <small style={ { color: "var(--bs-danger)" } }><i>NON REMPLI</i></small>
+                                        : t(rawValue, `caracteristic.${ caracteristic.id }.possibleValues.`)
+                                    return (
+                                        <tr key={ index }>
+                                            <td>{ tradValue }</td>
+                                            <td>{ (typeof pValueObj.selectable !== 'undefined') ? String(pValueObj.selectable) : <small style={ { color: "var(--bs-danger)" } }><i>NON REMPLI</i></small> }</td>
+                                            <td>{ pValueObj?.intervalType ?? <small style={ { color: "var(--bs-danger)" } }><i>NON REMPLI</i></small> }</td>
+                                        </tr>
+                                    )
+                                })}
                             </tbody>
                         </Table>
                     :   <p>AUCUNES VALEURS POSSIBLES FOURNIES</p>
@@ -167,7 +172,7 @@ export function ConfigSubItem({ subItem }:ConfigSubItemProps) {
                     { (subItem.characteristics as any[]).map((item, index) => {
                         return (
                             <tr key={ `subitem-carac-${ index }` }>
-                                <td>{ t(item.id) }</td>
+                                <td>{ t(item.id, 'caracteristic.') }</td>
                                 <td>{ (item.values as any[]).map((valItem, valIndex) => <span key={ `subitem-carac-${ index }-${ valIndex }` }>{ valItem.value } (by { valItem.author })</span>) }</td>
                                 <td>{ item.possibleValues.length }</td>
                             </tr>
