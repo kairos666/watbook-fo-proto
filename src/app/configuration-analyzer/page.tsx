@@ -7,7 +7,7 @@ export const metadata:Metadata = {
     title: 'configuration analyzer'
 }
 
-export default function MockGenerator() {
+export default function ConfigAnalyzer() {
     return (
         <main className="container">
             <div className="mt-3 position-sticky top-0 end-0">

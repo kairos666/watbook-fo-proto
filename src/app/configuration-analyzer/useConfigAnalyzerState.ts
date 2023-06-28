@@ -4,13 +4,13 @@ import { configToTradOutput, JSONTradOutput, TradOutput, tradOutputAnalyzer } fr
 
 const allTrads:TradOutput[] = configToTradOutput(translationsCodex);
 
-const tradAnalysis = tradOutputAnalyzer(allTrads);
-console.info(`${ tradAnalysis.entriesCount } traductions détectées, dont ${ tradAnalysis.uniqueIdEntriesCount } ID uniques`);
-console.log("ci-dessous le détail (FR) des IDs dupliquées");
-const duplicatesDetails = tradAnalysis.duplicates.map(duplicat => {
-    return { id: duplicat[1][0].id, trads: duplicat[1].map(trad => trad.translations.FR).join(' ; ') }
-});
-console.table(duplicatesDetails);
+// const tradAnalysis = tradOutputAnalyzer(allTrads);
+// console.info(`${ tradAnalysis.entriesCount } traductions détectées, dont ${ tradAnalysis.uniqueIdEntriesCount } ID uniques`);
+// console.log("ci-dessous le détail (FR) des IDs dupliquées");
+// const duplicatesDetails = tradAnalysis.duplicates.map(duplicat => {
+//     return { id: duplicat[1][0].id, trads: duplicat[1].map(trad => trad.translations.FR).join(' ; ') }
+// });
+// console.table(duplicatesDetails);
 //console.log(JSONTradOutput(allTrads, "FR")); // génére une fichier de traductions par langue à plat
 
 const translationMaps = allTrads
