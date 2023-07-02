@@ -11,6 +11,10 @@ export default function Home() {
                     <section className="col">
                         <h2>SAP RPA - configurations</h2>
                         <Link href="/configuration-analyzer" target="_blank">Configuration V0</Link>
+                        <br />
+                        <Link href="/configuration-analyzer/caracteristics-report" target="_blank">Caracteristics report</Link>
+                        <br />
+                        <Link href="/tdv" target="_blank">Parcours TDV</Link>
                     </section>
                 </div>
             </article>
