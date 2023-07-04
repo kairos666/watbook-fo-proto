@@ -6,6 +6,7 @@
 export type TDVStep = {
     id: string
     name: string
+    slideType: string
     isStartStep?: boolean // is root (one and only one on tree)
 }
 

@@ -1,6 +1,8 @@
-import { current } from "immer";
 import { Edge, Node } from "reactflow";
 import { TDVStep, TDVTransition } from "./tdv-descriptor.type";
+import ELK from 'elkjs/lib/elk.bundled.js';
+
+/* NODE & EDGES */
 
 const stepToFlowNodeMapper = (transitions:TDVTransition[]) => (step:TDVStep) => {
     const type = (transitions.find(trans => (trans.from === step.id)) === undefined)
@@ -11,7 +13,7 @@ const stepToFlowNodeMapper = (transitions:TDVTransition[]) => (step:TDVStep) => 
     
     return {
         id: step.id,
-        data: { label: step.name },
+        data: { label: step.name, slideType: step.slideType },
         position: { x: 0, y: 0 },
         targetPosition: 'left',
         sourcePosition: 'right',
@@ -43,10 +45,7 @@ export function buildNodesForSimplifiedTree(steps:TDVStep[], transitions:TDVTran
     const transitionToEdge = transitionToEdgeMapper();
 
     // build once every nodes
-    const nodes:Node[] = steps.map(stepToNode).map((nodeWithoutOffset, index) => {
-        return {...nodeWithoutOffset, position: { x: index * xStepOffset, y: 0 } }
-    });;
-
+    const nodes:Node[] = steps.map(stepToNode);
 
     // build once every transitions
     const edges:Edge[] = transitions.map(transitionToEdge);
@@ -119,3 +118,41 @@ export function buildNodesForSimplifiedTree(steps:TDVStep[], transitions:TDVTran
 
 //     return { nodes, edges };
 // }
+
+/* LAYOUT - ELK ALGO (https://github.com/kieler/elkjs) */
+export function flowToElkGraph(nodes:Node[], edges:Edge[], options?:any) {
+    const elk = new ELK();
+    const isHorizontal = options?.['elk.direction'] === 'RIGHT';
+
+    // create ELK graph
+    const graph = {
+        id: 'root',
+        layoutOptions: options ?? {},
+        children: nodes.map((node) => ({
+                ...node,
+                // Adjust the target and source handle positions based on the layout
+                // direction.
+                targetPosition: isHorizontal ? 'left' : 'top',
+                sourcePosition: isHorizontal ? 'right' : 'bottom',
+
+                // Hardcode a width and height for elk to use when layouting.
+                width: 200,
+                height: 75,
+            })),
+        edges: edges,
+    };
+
+    return elk
+        .layout((graph as any))
+        .then((layoutedGraph) => ({
+            nodes: layoutedGraph.children.map((node) => ({
+                ...node,
+                // React Flow expects a position property on the node instead of `x`
+                // and `y` fields.
+                position: { x: node.x, y: node.y },
+            })),
+
+            edges: layoutedGraph.edges,
+        }))
+        .catch(console.error);
+}

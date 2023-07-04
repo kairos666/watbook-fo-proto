@@ -1,0 +1,22 @@
+@import "../../styles/variables";
+
+.react-flow {
+    
+}
+
+.react-flow__node {
+    background-color: darken($accent-alt-color, 15%);
+    color: white;
+}
+
+.react-flow__node-input {
+    border: 3px solid $accent-color;
+}
+
+.react-flow__node-default {
+    
+}
+
+.react-flow__node-output {
+    border: 3px solid $accent-color;
+}
