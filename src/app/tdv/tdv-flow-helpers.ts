@@ -45,7 +45,7 @@ export function buildNodesForSimplifiedTree(steps:TDVStep[], transitions:TDVTran
     const transitionToEdge = transitionToEdgeMapper();
 
     // build once every nodes
-    const nodes:Node[] = steps.map(stepToNode);
+    const nodes:Node[] = (steps.map(stepToNode) as Node[]);
 
     // build once every transitions
     const edges:Edge[] = transitions.map(transitionToEdge);
@@ -145,7 +145,7 @@ export function flowToElkGraph(nodes:Node[], edges:Edge[], options?:any) {
     return elk
         .layout((graph as any))
         .then((layoutedGraph) => ({
-            nodes: layoutedGraph.children.map((node) => ({
+            nodes: (layoutedGraph?.children ?? []).map((node) => ({
                 ...node,
                 // React Flow expects a position property on the node instead of `x`
                 // and `y` fields.

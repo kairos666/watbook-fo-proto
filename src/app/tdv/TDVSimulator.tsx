@@ -1,24 +1,26 @@
 'use client';
 
 import { useCallback, useLayoutEffect, useState } from 'react';
-import ReactFlow, { Controls, Background, applyNodeChanges, applyEdgeChanges, Node, Edge, DefaultEdgeOptions, Handle, Position, NodeProps, NodeTypes } from 'reactflow';
+import ReactFlow, { Controls, Background, applyNodeChanges, applyEdgeChanges, Node, Edge, DefaultEdgeOptions, NodeTypes } from 'reactflow';
 import tdvDescription from './tdv-descriptor.json';
 import 'reactflow/dist/style.css';
 import './tdv-flow-styles.scss';
 import { buildNodesForSimplifiedTree, flowToElkGraph } from './tdv-flow-helpers';
+import InputStepNode from './InputStepNode';
+import StepNode from './StepNode';
+import OutputStepNode from './OutputStepNode';
 
 /* INIT NODES */
 const { nodes: initialNodes, edges: initialEdges } = buildNodesForSimplifiedTree(tdvDescription.tdvSteps, tdvDescription.tdvTransitions);
+const nodeTypes: NodeTypes = {
+    input: InputStepNode,
+    default: StepNode,
+    output: OutputStepNode
+};
 
 type TDVSimulatorProps = {}
 
 export default function TDVSimulator({}:TDVSimulatorProps) {
-    const nodeTypes: NodeTypes = {
-        input: (InputStepNode as any),
-        default: (StepNode as any),
-        output: (OutputStepNode as any)
-    };
-
     const defaultEdgeOptions:DefaultEdgeOptions = {
         animated: true,
         style: {
@@ -64,64 +66,3 @@ export default function TDVSimulator({}:TDVSimulatorProps) {
         </div>
     );
 }
-
-/**
- * CUSTOM NODES
- */
-type StepData = {
-    label: string
-    slideType: string
-}
-
-const InputStepNode:Node<StepData> = ({ data, isConnectable }:NodeProps<StepData>) => {
-    return (
-        <>
-            <span>{ data.label }</span>
-            <br />
-            <br />
-            <small className="text-muted text-white-50">{ data.slideType }</small>
-            <Handle
-                type="source"
-                position={Position.Right}
-                isConnectable={isConnectable}
-            />
-        </>
-    );
-};
-
-const StepNode:Node<StepData> = ({ data, isConnectable }:NodeProps<StepData>) => {
-    return (
-        <>
-            <Handle
-                type="target"
-                position={Position.Left}
-                isConnectable={isConnectable}
-            />
-            <span>{ data.label }</span>
-            <br />
-            <br />
-            <small className="text-muted text-white-50">{ data.slideType }</small>
-            <Handle
-                type="source"
-                position={Position.Right}
-                isConnectable={isConnectable}
-            />
-        </>
-    );
-};
-
-const OutputStepNode:Node<StepData> = ({ data, isConnectable }:NodeProps<StepData>) => {
-    return (
-        <>
-            <Handle
-                type="target"
-                position={Position.Left}
-                isConnectable={isConnectable}
-            />
-            <span>{ data.label }</span>
-            <br />
-            <br />
-            <small className="text-muted text-white-50">{ data.slideType }</small>
-        </>
-    );
-};
