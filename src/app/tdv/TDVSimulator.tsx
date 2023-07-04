@@ -2,7 +2,12 @@
 
 import { useCallback, useState } from 'react';
 import ReactFlow, { Controls, Background, applyNodeChanges, applyEdgeChanges, Node, Edge, DefaultEdgeOptions } from 'reactflow';
+import tdvDescription from './tdv-descriptor.json';
 import 'reactflow/dist/style.css';
+import { buildNodesForSimplifiedTree } from './tdv-flow-helpers';
+
+/* INIT NODES */
+const { nodes: initialNodes, edges: initialEdges } = buildNodesForSimplifiedTree(tdvDescription.tdvSteps, tdvDescription.tdvTransitions, 50);
 
 type TDVSimulatorProps = {}
 
@@ -15,22 +20,6 @@ export default function TDVSimulator({}:TDVSimulatorProps) {
         }
     };
 
-    const initialNodes = [
-        {
-            id: '1',
-            data: { label: 'Hello' },
-            position: { x: 0, y: 0 },
-            type: 'input',
-        },
-        {
-            id: '2',
-            data: { label: 'World' },
-            position: { x: 100, y: 100 },
-        },
-    ];
-
-    const initialEdges = [{ id: '1-2', source: '1', target: '2', label: 'my condition' }];
-
     const [nodes, setNodes] = useState<Node[]>(initialNodes);
     const [edges, setEdges] = useState<Edge[]>(initialEdges);
 
@@ -38,9 +27,10 @@ export default function TDVSimulator({}:TDVSimulatorProps) {
     const onEdgesChange = useCallback( (changes:any) => setEdges((eds) => applyEdgeChanges(changes, eds)),[] );
 
     return (
-        <div style={{ height: '100%', aspectRatio: 2, maxHeight: '80vh', marginInline: 'auto' }}>
+        <div style={{ height: '100vh', width: '100vw' }}>
             <ReactFlow 
-                fitView 
+                fitView
+                fitViewOptions={ { minZoom: 0.1, maxZoom: 10 } }
                 nodes={ nodes } 
                 edges={ edges } 
                 onNodesChange={ onNodesChange } 

@@ -13,7 +13,7 @@ export type TDVTransition = {
     from: string
     to: string
     conditions?: string[] // only if conditions have to be met to activate this transition
-    conditionType?: "AND"|"ANY" // necessary if multiple conditions are provided
+    conditionType?: string // accept "AND" or "ANY", necessary if multiple conditions are provided
 }
 
 export type TDVDescriptor = {

@@ -5,7 +5,7 @@
         { "id": "step-02", "name": "choix dimensions" },
         { "id": "step-03", "name": "choix attribut du banc" },
         { "id": "step-04", "name": "choix moyen d'accès" },
-        { "id": "step-05", "name": "choix choix GPE" },
+        { "id": "step-05", "name": "choix GPE" },
         { "id": "step-06", "name": "choix profil de fond" },
         { "id": "step-07", "name": "choix hauteur du mur" },
         { "id": "step-08", "name": "validation fiche tech. profil de fond" },
