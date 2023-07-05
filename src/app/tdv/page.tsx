@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import TDVSimulator from "./TDVSimulator";
+import TDVStepByStepSimulator from "./TDVStepByStepSimulator";
 
 export const metadata:Metadata = {
     title: 'parcours TDV'
@@ -17,9 +18,10 @@ export default function CaracReportPage() {
             <section className="container">
                 <header className="row mt-4 mb-2">
                     <h2>Simulation de parcours pas à pas</h2>
+                    <p>Création du parcours en simulant, pas à pas, les choix du client. Lorsqu'une modification est faite à une étape précédente, les étapes suivantes sont supprimées pour être évaluées à nouveau</p>
                 </header>
                 <div className="row">
-                    <p>TODO</p>
+                    <TDVStepByStepSimulator />
                 </div>
             </section>
         </main>
