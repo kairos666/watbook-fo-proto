@@ -14,7 +14,9 @@ export default function Home() {
                         <br />
                         <Link href="/configuration-analyzer/caracteristics-report" target="_blank">Caracteristics report</Link>
                         <br />
-                        <Link href="/tdv" target="_blank">Parcours TDV</Link>
+                        <Link href="/tdv" target="_blank">Parcours TDV (arbre)</Link>
+                        <br />
+                        <Link href="/tdv-step-by-step" target="_blank">Parcours TDV (pas à pas)</Link>
                     </section>
                 </div>
             </article>

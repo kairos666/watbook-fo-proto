@@ -1,10 +1,9 @@
 'use client';
 
 import { useState } from "react";
-import tdvDescription from './tdv-descriptor.json';
+import tdvDescription from '../tdv/tdv-descriptor.json';
 import { Button, ButtonGroup, ButtonToolbar } from "react-bootstrap";
-import { TDVStep, TDVTransition } from "./tdv-descriptor.type";
-import { staticGenerationAsyncStorage } from "next/dist/client/components/static-generation-async-storage";
+import { TDVStep, TDVTransition } from "../tdv/tdv-descriptor.type";
 
 type TDVStepByStepSimulatorProps = {}
 
