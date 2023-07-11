@@ -1,0 +1,48 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.nwc-PageWarpper {
+    width: 100vw;
+    height: 100vh;
+    background:
+        linear-gradient(27deg, #151515 5px, transparent 5px) 0 5px,
+        linear-gradient(207deg, #151515 5px, transparent 5px) 10px 0px,
+        linear-gradient(27deg, #222 5px, transparent 5px) 0px 10px,
+        linear-gradient(207deg, #222 5px, transparent 5px) 10px 5px,
+        linear-gradient(90deg, #1b1b1b 10px, transparent 10px),
+        linear-gradient(#1d1d1d 25%, #1a1a1a 25%, #1a1a1a 50%, transparent 50%, transparent 75%, #242424 75%, #242424);
+    background-color: #131313;
+    background-size: 20px 20px;
+    padding: 2rem;
+}
+
+.nwc-Layout {
+    display:flex;
+    height:100%;
+    gap: 2rem;
+}
+
+.nwc-LayoutCell {
+    flex:1 1 calc(100%/3);
+    display:flex;
+    flex-direction: column;
+}
+
+.nwc-LayoutCell_Header {
+    color: #00b8ff;
+    
+    h2 { font-size: 1.5em; }
+    p { font-size: 1em; }
+}
+
+.nwc-LayoutCell_Body {
+    flex: 1 1 auto;
+    overflow:auto;
+    border: 2px solid #00b8ff;
+    padding:1rem;
+    background-color: rgba(255,255,255,0.85);
+    * {
+        overflow-anchor: none;
+    }
+    > .nwc-LayoutCell_Body_Anchor { overflow-anchor: auto; height: 1px; }
+}

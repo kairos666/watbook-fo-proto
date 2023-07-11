@@ -17,6 +17,8 @@ export default function Home() {
                         <Link href="/tdv" target="_blank">Parcours TDV (arbre)</Link>
                         <br />
                         <Link href="/tdv-step-by-step" target="_blank">Parcours TDV (pas à pas)</Link>
+                        <br />
+                        <Link href="/new-wat-configurator" target="_blank">NEW WAT CONFIGURATOR</Link>
                     </section>
                 </div>
             </article>
